@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Socket.IO</title>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io()
+      const root = document.getElementById('root')
+
+      const gameToString = (game) => {
+        return `${game.homeTeam} ${game.homeScore} - ${game.awayTeam} ${game.awayScore} `
+      }
+
+      const renderNew = (game) => {
+        const div = document.createElement('div')
+        div.id = `game-${game.id}`
+        div.textContent = gameToString(game)
+        root.appendChild(div)
+      }
+
+      const renderUpdated = (game) => {
+        const div = document.getElementById( `game-${game.id}`)
+        div.textContent = gameToString(game)
+      }
+
+      socket.on('new-game', message => {
+        const game = JSON.parse(message)
+        console.log('new-game', game)
+        renderNew(game)
+      });
+
+      socket.on('updated-game', message => {
+        const game = JSON.parse(message)
+        console.log('updated-game', game)
+        renderUpdated(game)
+      }); 
+    </script>
+  </body>
+</html>
